@@ -34,7 +34,7 @@ def main():
     particle_screen = pygame.Surface((window_width // 4, window_height // 4))
     globalStateManager.particle_system = ParticleSystem(particle_screen)
 
-    print(f"Settings: {settings}")
+    # print(f"Settings: {settings}")
 
     last_fixed_step_time = time.time()
     last_frame_time = time.time()
