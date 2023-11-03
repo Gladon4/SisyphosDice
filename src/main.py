@@ -31,10 +31,10 @@ def main() -> int:
 
     globalStateManager.screen = screen
 
-    player = Player((32, 32), [500, 500], 1, 0.1)
+    player = Player((32, 32), [500, 500], 3, 0.1)
     load_level("../data/levels/testStage.json")
     player.set_level(globalStateManager.level)
-    player.toggleIsAffectedByGravity()
+    player.setIsAffectedByGravity(False)
     main_camera = Camera(player, globalStateManager.level, (window_width, window_height), 5)
     globalStateManager.camera = main_camera
 
@@ -47,8 +47,9 @@ def main() -> int:
 
     # print(f"Settings: {settings}")
 
-    last_fixed_step_time = 0
-    last_frame_time = 0
+    last_collision = None
+
+    last_frame_time = time.time()
 
     while globalStateManager.run:
         current_frame_time = time.time()
@@ -60,18 +61,6 @@ def main() -> int:
         mouse_press = pygame.mouse.get_pressed()
         
         pressed_keyboard_keys = pygame.key.get_pressed()
-        
-
-        screen.fill(globalStateManager.settings["colours"]["black"])
-
-        render_position = main_camera.update_and_draw(delta_time)
-        player.draw(main_camera.screen)
-        if globalStateManager.debug: draw_debug_info()
-        screen.blit(main_camera.screen, render_position)
-
-        draw_particles(particle_screen, delta_time)
-        draw_gui_screen(gui_screen, globalStateManager.font, delta_time)
-
                     
 
         if pressed_keyboard_keys[pygame.K_a]:
@@ -81,11 +70,29 @@ def main() -> int:
             if player.velocity[0] < 10:
                 player.velocity[0] = 10
 
-    
-        old_player_position = player.position
-        new_player_position = player.move(delta_time)
-        
+        if pressed_keyboard_keys[pygame.K_SPACE]:
+            player.velocity[1] -= 5
 
+    
+        old_player_position = player.position[:]
+        new_player_position = player.move(delta_time)
+
+        if new_player_position[0]-old_player_position[0] != 0:
+            solve = globalStateManager.level.check_for_collisions_on_path(player, old_player_position, new_player_position)
+            if solve != None:
+                last_collision = solve
+
+
+        screen.fill(globalStateManager.settings["colours"]["black"])
+
+        render_position = main_camera.update_and_draw(delta_time)
+        player.draw(main_camera.screen)
+        if globalStateManager.debug: draw_debug_info()
+        if last_collision != None: pygame.draw.circle(main_camera.screen, (200, 0, 0), last_collision, 5)
+        screen.blit(main_camera.screen, render_position)
+
+        draw_particles(particle_screen, delta_time)
+        draw_gui_screen(gui_screen, globalStateManager.font, delta_time)
 
 
         last_frame_time = current_frame_time

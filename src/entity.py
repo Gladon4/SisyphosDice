@@ -21,9 +21,8 @@ class Entity():
         self.level = level
 
 
-    def toggleIsAffectedByGravity(self) -> bool:
-        self.isAffectedByGravity = not self.isAffectedByGravity
-        return self.isAffectedByGravity
+    def setIsAffectedByGravity(self, isAffectedByGravity: bool) -> None:
+        self.isAffectedByGravity = isAffectedByGravity
 
 
     def __gravity(self, delta_time) -> None:
@@ -39,7 +38,12 @@ class Entity():
         self.velocity[0] += (self.acceleration[0] + drag_froce[0]) * delta_time * 60
         self.velocity[1] += (self.acceleration[1] + drag_froce[1]) * delta_time * 60
 
+        if -0.01 <= self.velocity[0] <= 0.01:
+            self.velocity[0] = 0
+
         self.position[0] += self.velocity[0] * delta_time * 60
         self.position[1] += self.velocity[1] * delta_time * 60
+
+        # print(self.position)
 
         return self.position

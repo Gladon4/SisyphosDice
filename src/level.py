@@ -35,17 +35,50 @@ class Level():
 
     
     def check_for_collisions_on_path(self, object, starting_position, end_position):
-        start_chunk_index = starting_position // self.chunk_width
-        end_chunk_index = end_position // self.chunk_width
+        start_chunk_index = int(starting_position[0] // self.chunk_width)
+        end_chunk_index = int(end_position[0] // self.chunk_width)
 
         for chunk in self.collision_chunks[start_chunk_index:end_chunk_index+1]:
             for hitbox in chunk:
-                pass
+                solve = self.__collision_check_with_hitbox(hitbox, starting_position, end_position)
+                if solve != None:
+                    return solve
 
     
     def __collision_check_with_hitbox(self, hitbox, starting_position, end_position):
-        hitbox_lines = []
-        
+        object_line = (starting_position, (end_position[0] - starting_position[0], end_position[1] - starting_position[1]))
+
+        # hitbox_lines = [((origin_x, origin_y), (x, y))]
+        hitbox_lines = [((hitbox["x"], hitbox["y"]), (hitbox["width"], 0)),
+                        ((hitbox["x"], hitbox["y"]), (0, hitbox["height"])),
+                        ((hitbox["x"], hitbox["y"]+hitbox["height"]), (hitbox["width"], 0)),
+                        ((hitbox["x"]+hitbox["width"], hitbox["y"]), (0, hitbox["height"]))]
+    
+
+        for line in hitbox_lines:
+            if object_line[1][0] == line[1][0] or object_line[1][1] == line[1][1]:
+                continue
+
+            equations = np.array([[-object_line[1][0], line[1][0]], 
+                                  [-object_line[1][1], line[1][1]]])
+            
+            solutions = np.array([object_line[0][0]-line[0][0], 
+                                  object_line[0][1]-line[0][1]])
+            
+            solve = np.linalg.solve(equations, solutions).tolist()
+            
+
+            if 0 <= solve[0] <= 1 and 0 <= solve[1] <= 1:
+                return (line[0][0] + line[1][0] * solve[1], line[0][1] + line[1][1] * solve[1])
+            
+        return None
+
         # https://numpy.org/doc/stable/reference/generated/numpy.linalg.solve.html
-        # equatiobs = np.array([])
-        # solutions = np.array([starting_position[0]-])
+
+        """
+            P + x_0 * p = H + x_1 * h
+            P-H = x_1*h - x_0*p
+
+            P(x)-H(x) = x_1*h(x) - x_0*p(x)
+            P(y)-H(y) = x_1*h(y) - x_0*p(y)
+        """
