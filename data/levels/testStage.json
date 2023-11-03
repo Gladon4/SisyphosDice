@@ -1,10 +1,11 @@
-{"hitboxes": [
-  {"x": 0, "y": 700, "width": 2000, "height": 100, "tag": "level"},
-  {"x": 0, "y": 0, "width": 50, "height": 800, "tag": "level"},
-  {"x": 1950, "y": 0, "width": 50, "height": 800, "tag": "level"},
-  {"x": 750, "y": 250, "width": 400, "height": 150, "tag": "level"},
-  {"x": 400, "y": 450, "width": 300, "height": 100, "tag": "level"},
-  {"x": 1300, "y": 500, "width": 200, "height": 30, "tag": "jump-through"}
+{
+  "hitboxes": [
+    {"x": 0, "y": 700, "width": 2000, "height": 100, "tag": "level"},
+    {"x": 0, "y": 0, "width": 50, "height": 800, "tag": "level"},
+    {"x": 1950, "y": 0, "width": 50, "height": 800, "tag": "level"},
+    {"x": 750, "y": 250, "width": 400, "height": 150, "tag": "level"},
+    {"x": 400, "y": 450, "width": 300, "height": 100, "tag": "level"},
+    {"x": 1300, "y": 500, "width": 200, "height": 30, "tag": "jump-through"}
   ],
   "lights": [
     {"x": 100, "y": 450, "colour": [255, 150, 10], "intesity": 35, "flicker_strength": 1},
@@ -15,6 +16,7 @@
     {"x": 1120, "y": 410, "colour": [200, 200, 255], "intesity": 20, "flicker_strength": 0.75}
   ],
   "brightness": 0.25,
+  "gravity": 1,
   "texture": "../data/levels/testStage.png",
   "size": [2000, 800]
 }

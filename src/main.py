@@ -31,9 +31,12 @@ def main() -> int:
 
     globalStateManager.screen = screen
 
-    player = Player((32, 32), (500, 500))
+    player = Player((32, 32), [500, 500], 1, 0.1)
     load_level("../data/levels/testStage.json")
-    main_camera = Camera(player, globalStateManager.level, (window_width, window_height), 30)
+    player.set_level(globalStateManager.level)
+    player.toggleIsAffectedByGravity()
+    main_camera = Camera(player, globalStateManager.level, (window_width, window_height), 5)
+    globalStateManager.camera = main_camera
 
     gui_screen = pygame.Surface((window_width, window_height))
     gui_screen.set_colorkey(settings["colours"]["colour_key"])
@@ -49,56 +52,49 @@ def main() -> int:
 
     while globalStateManager.run:
         current_frame_time = time.time()
+        delta_time = current_frame_time - last_frame_time
 
-        update_content = {"main_camera": main_camera,
-                          "gui_screen": gui_screen,
-                          "particle_screen": particle_screen,
-                          "player": player}
+        event_manager()
+
+        mx, my = pygame.mouse.get_pos()
+        mouse_press = pygame.mouse.get_pressed()
         
-        update(screen, update_content, current_frame_time - last_frame_time)
+        pressed_keyboard_keys = pygame.key.get_pressed()
+        
+
+        screen.fill(globalStateManager.settings["colours"]["black"])
+
+        render_position = main_camera.update_and_draw(delta_time)
+        player.draw(main_camera.screen)
+        if globalStateManager.debug: draw_debug_info()
+        screen.blit(main_camera.screen, render_position)
+
+        draw_particles(particle_screen, delta_time)
+        draw_gui_screen(gui_screen, globalStateManager.font, delta_time)
+
+                    
+
+        if pressed_keyboard_keys[pygame.K_a]:
+            if player.velocity[0] > -10:
+                player.velocity[0] = -10
+        if pressed_keyboard_keys[pygame.K_d]:
+            if player.velocity[0] < 10:
+                player.velocity[0] = 10
+
+    
+        old_player_position = player.position
+        new_player_position = player.move(delta_time)
+        
+
+
+
         last_frame_time = current_frame_time
-
-        if time.time() - last_fixed_step_time >= settings["game"]["fixed_step_size"]:
-            fixed_update_content = {"player": player
-                                    }
-            fixed_update(fixed_update_content, current_frame_time - last_fixed_step_time)
-            last_fixed_step_time = current_frame_time
-
+        pygame.display.update()
         # mainClock.tick(60)
 
 
     pygame.quit()
     return 0
-
-
-def update(screen, update_content, last_frame_time):
-    screen.fill(globalStateManager.settings["colours"]["black"])
-
-    render_position = update_content["main_camera"].update_and_draw(last_frame_time)
-    screen.blit(update_content["main_camera"].screen, render_position)
-
-    draw_particles(update_content["particle_screen"], last_frame_time)
-    draw_gui_screen(update_content["gui_screen"], globalStateManager.font, last_frame_time)
-
-    pygame.display.update()
-
-
-def fixed_update(fixed_update_content, last_fixed_step_time):
-    event_manager()
-
-    mx, my = pygame.mouse.get_pos()
-    mouse_press = pygame.mouse.get_pressed()
-    
-    pressed_keyboard_keys = pygame.key.get_pressed()
-
-    if pressed_keyboard_keys[pygame.K_a]:
-        fixed_update_content["player"].position = (fixed_update_content["player"].position[0] - 10, fixed_update_content["player"].position[1])
-    if pressed_keyboard_keys[pygame.K_d]:
-        fixed_update_content["player"].position = (fixed_update_content["player"].position[0] + 10, fixed_update_content["player"].position[1])
-    if pressed_keyboard_keys[pygame.K_w]:
-        fixed_update_content["player"].position = (fixed_update_content["player"].position[0], fixed_update_content["player"].position[1] - 10)
-    if pressed_keyboard_keys[pygame.K_s]:
-        fixed_update_content["player"].position = (fixed_update_content["player"].position[0], fixed_update_content["player"].position[1] + 10)
 
 
 def load_settings(path: str) -> dict:
@@ -130,7 +126,7 @@ def event_manager():
                 globalStateManager.light_disable = not globalStateManager.light_disable
 
 
-def draw_gui_screen(gui_screen, font, last_frame_time):
+def draw_gui_screen(gui_screen: pygame.Surface, font: Font, last_frame_time):
     gui_screen.fill(globalStateManager.settings["colours"]["colour_key"])
 
     if globalStateManager.show_fps:
@@ -138,7 +134,7 @@ def draw_gui_screen(gui_screen, font, last_frame_time):
         globalStateManager.screen.blit(gui_screen, (0, 0))
 
 
-def draw_particles(particle_screen, last_frame_time):
+def draw_particles(particle_screen: pygame.Surface, delta_time):
     settings = globalStateManager.settings
 
     particle_screen.fill(settings["colours"]["black"])
@@ -149,6 +145,14 @@ def draw_particles(particle_screen, last_frame_time):
 
     particle_scaled = pygame.transform.scale(particle_screen, (settings["window"]["width"], settings["window"]["height"]))
     globalStateManager.screen.blit(particle_scaled, (0, 0))
+
+
+def draw_debug_info():
+    for box in globalStateManager.level.hitboxes:
+        pygame.draw.rect(globalStateManager.camera.screen, (0, 200, 0), (box["x"], box["y"], box["width"], box["height"]), 3)
+
+    for i in range(len(globalStateManager.level.collision_chunks)):
+        pygame.draw.line(globalStateManager.camera.screen, (0, 0, 200), (i*globalStateManager.level.chunk_width, 0), (i*globalStateManager.level.chunk_width, globalStateManager.settings["window"]["height"]))
 
 
 if __name__ == "__main__":

@@ -12,6 +12,6 @@
         "colour_key": [0, 255, 0]
     },
     "game": {
-        "fixed_step_size": 0.0079
+        "fixed_step_size": 0.016
     }
 }

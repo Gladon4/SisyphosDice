@@ -9,8 +9,7 @@ class Camera():
         self.target = target
         self.level = level
         self.position = (0,0)
-        self.screen = pygame.Surface(level.level_data["size"])
-        self.player = target
+        self.screen = pygame.Surface(level.size)
         self.screen_size = screen_size
         self.speed = speed
 
@@ -18,8 +17,6 @@ class Camera():
         self.screen.fill((0,0,0))
     
         self.screen.blit(self.level.level_image, (0,0))
-
-        pygame.draw.circle(self.screen, (255,0,0), self.player.position, 10)
 
 
     def update(self, last_frame_time):
@@ -31,11 +28,11 @@ class Camera():
 
         render_x = center[0] - self.screen_size[0] / 2
         render_x = max(render_x, 0)
-        render_x = min(render_x, self.level.level_data["size"][0] -  self.screen_size[0])
+        render_x = min(render_x, self.level.size[0] -  self.screen_size[0])
 
         render_y = center[1] - self.screen_size[1] / 2
         render_y = max(render_y, 0)
-        render_y = min(render_y, self.level.level_data["size"][1] - self.screen_size[1])
+        render_y = min(render_y, self.level.size[1] - self.screen_size[1])
         
         return (-render_x, -render_y)
 
