@@ -1,7 +1,7 @@
 from level import Level
 
 class Entity():
-    def __init__(self, size, position, mass, drag) -> None:
+    def __init__(self, size: tuple, position: tuple, mass: float, drag: float) -> None:
         self.size = size
         self.mass = mass
 
@@ -15,6 +15,7 @@ class Entity():
         self.level = None
 
         self.isAffectedByGravity = True
+        self.on_ground = False
 
 
     def set_level(self, level: Level) -> None:
@@ -25,13 +26,13 @@ class Entity():
         self.isAffectedByGravity = isAffectedByGravity
 
 
-    def __gravity(self, delta_time) -> None:
+    def __apply_gravity(self, delta_time) -> None:
         if self.isAffectedByGravity and self.level:
             self.velocity[1] += self.level.gravity * delta_time * 60
 
 
     def move(self, delta_time) -> tuple:
-        self.__gravity(delta_time)
+        self.__apply_gravity(delta_time)
 
         drag_froce = (-self.velocity[0] * self.drag, -self.velocity[1] * self.drag)
 
@@ -48,27 +49,41 @@ class Entity():
         new_position[0] += self.velocity[0] * delta_time * 60
         new_position[1] += self.velocity[1] * delta_time * 60
 
-        has_moved = new_position[0]-self.position[0] != 0 or new_position[1]-self.position[1] != 0
+        self.on_ground = False
 
-        if has_moved:
-            solve = self.level.check_for_collisions_on_path(self, self.position, new_position)
-            if solve != None:
-                hitbox = solve[0]
-                collision_line = solve[1]
+        solve = self.level.check_for_collisions_on_path(self, self.position, new_position)
+        if solve != []:
+            can_move_x = True
+            can_move_y = True
+
+            for collision in solve:
+                hitbox = collision[0]
+                collision_line = collision[1]
                 collision_with_horizontal = collision_line[1][1] == 0
 
+                if hitbox["y"] > self.position[1] and collision_with_horizontal:
+                    self.on_ground = True
+
                 if collision_with_horizontal:
-                    self.position[0] = new_position[0]
-                    self.velocity[1] = 0
-                    self.acceleration[1] = 0
+                    can_move_y = False
 
                 else:
-                    self.position[1] = new_position[1]
-                    self.velocity[0] = 0
-                    self.acceleration[0] = 0
+                    can_move_x = False
 
+            if can_move_x:
+                self.position[0] = new_position[0]
             else:
-                self.position = new_position
+                self.velocity[0] = 0
+                self.acceleration[0] = 0
+            
+            if can_move_y:
+                self.position[1] = new_position[1]
+            else:
+                self.velocity[1] = 0
+                self.acceleration[1] = 0
+
+        else:
+            self.position = new_position
 
             
         # print(self.position)

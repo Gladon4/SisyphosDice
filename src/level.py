@@ -35,24 +35,47 @@ class Level():
 
     
     def check_for_collisions_on_path(self, object, starting_position, end_position):
-        start_chunk_index = int(starting_position[0] // self.chunk_width)
-        end_chunk_index = int(end_position[0] // self.chunk_width)
+        current_chunk =  int(starting_position[0] // self.chunk_width)
+        chunks_to_test = self.collision_chunks[max(0, current_chunk-1):min(len(self.collision_chunks), current_chunk+2)]
 
-        for chunk in self.collision_chunks[start_chunk_index:end_chunk_index+1]:
+        corner_points_offests = [(0,0)]
+
+        if object.velocity[0] > 0:
+            corner_points_offests += [(object.size[0]/2, -(object.size[1]/2)),
+                                      (object.size[0]/2, object.size[1]/2)]
+        elif object.velocity[0] < 0:
+            corner_points_offests += [(-object.size[0]/2, -(object.size[1]/2)),
+                                      (-object.size[0]/2, object.size[1]/2)]
+            
+        if object.velocity[1] > 0:
+            corner_points_offests += [(object.size[0]/2, object.size[1]/2),
+                                      (-object.size[0]/2, object.size[1]/2)]
+        elif object.velocity[1] < 0:
+            corner_points_offests += [(object.size[0]/2, -(object.size[1]/2)),
+                                      (-object.size[0]/2, -(object.size[1]/2))]
+            
+        corner_points_offests = list(set(corner_points_offests))
+
+        collisions = []
+
+        for chunk in chunks_to_test:
             for hitbox in chunk:
-                solve = self.__collision_check_with_hitbox(hitbox, starting_position, end_position)
-                if solve != None:
-                    return solve
+                for offset in corner_points_offests:
+                    solve = self.__collision_check_with_hitbox(hitbox, [starting_position[0]+offset[0], starting_position[1]+offset[1]], [end_position[0]+offset[0], end_position[1]+offset[1]])
+                    if solve != None:
+                        collisions.append(solve)
+        return collisions
 
     
     def __collision_check_with_hitbox(self, hitbox, starting_position, end_position):
-        object_line = (starting_position, (end_position[0] - starting_position[0], end_position[1] - starting_position[1]))
+        object_line = (starting_position, (end_position[0] - starting_position[0], 
+                                           end_position[1] - starting_position[1]))
 
         # hitbox_lines = [((origin_x, origin_y), (x, y))]
-        hitbox_lines = [((hitbox["x"], hitbox["y"]), (hitbox["width"], 0)),
-                        ((hitbox["x"], hitbox["y"]), (0, hitbox["height"])),
-                        ((hitbox["x"], hitbox["y"]+hitbox["height"]), (hitbox["width"], 0)),
-                        ((hitbox["x"]+hitbox["width"], hitbox["y"]), (0, hitbox["height"]))]
+        hitbox_lines = [((hitbox["x"]                  , hitbox["y"]                   ), (hitbox["width"], 0               )),
+                        ((hitbox["x"]                  , hitbox["y"]                   ), (0              , hitbox["height"])),
+                        ((hitbox["x"]                  , hitbox["y"] + hitbox["height"]), (hitbox["width"], 0               )),
+                        ((hitbox["x"] + hitbox["width"], hitbox["y"]                   ), (0              , hitbox["height"]))]
     
 
         for line in hitbox_lines:

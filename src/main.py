@@ -52,7 +52,7 @@ def main() -> int:
     last_frame_time = time.time()
 
     while globalStateManager.run:
-        current_frame_time = time.time()
+        current_frame_time = time.time()  
         delta_time = current_frame_time - last_frame_time
 
         event_manager()
@@ -71,8 +71,9 @@ def main() -> int:
             if player.velocity[0] < 10:
                 player.velocity[0] = 10
 
-        if pressed_keyboard_keys[pygame.K_SPACE]:
-            player.velocity[1] -= 1
+        if pressed_keyboard_keys[pygame.K_SPACE] and player.on_ground:
+            player.on_ground = False
+            player.velocity[1] -= 20
 
     
         # old_player_position = player.position[:]
