@@ -69,7 +69,7 @@ class Level():
             
 
             if 0 <= solve[0] <= 1 and 0 <= solve[1] <= 1:
-                return (line[0][0] + line[1][0] * solve[1], line[0][1] + line[1][1] * solve[1])
+                return hitbox, line
             
         return None
 

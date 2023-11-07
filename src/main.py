@@ -31,7 +31,7 @@ def main() -> int:
 
     globalStateManager.screen = screen
 
-    player = Player((32, 32), [500, 600], 3, 0.1)
+    player = Player((32, 32), [500, 600], 3, 0)
     load_level("../data/levels/testStage.json")
     player.set_level(globalStateManager.level)
     player.setIsAffectedByGravity(True)
@@ -62,6 +62,7 @@ def main() -> int:
         
         pressed_keyboard_keys = pygame.key.get_pressed()
                     
+        player.velocity[0] = 0
 
         if pressed_keyboard_keys[pygame.K_a]:
             if player.velocity[0] > -10:
@@ -71,11 +72,11 @@ def main() -> int:
                 player.velocity[0] = 10
 
         if pressed_keyboard_keys[pygame.K_SPACE]:
-            player.velocity[1] -= 5
+            player.velocity[1] -= 1
 
     
         # old_player_position = player.position[:]
-        new_player_position = player.move(delta_time)
+        player.move(delta_time)
 
         
 

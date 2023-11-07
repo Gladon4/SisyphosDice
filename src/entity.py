@@ -48,16 +48,29 @@ class Entity():
         new_position[0] += self.velocity[0] * delta_time * 60
         new_position[1] += self.velocity[1] * delta_time * 60
 
+        has_moved = new_position[0]-self.position[0] != 0 or new_position[1]-self.position[1] != 0
 
-        if new_position[0]-self.position[0] != 0:
+        if has_moved:
             solve = self.level.check_for_collisions_on_path(self, self.position, new_position)
-            if solve == None:
-                self.position = new_position
-            else:
-                self.velocity = [0, 0]
-                self.acceleration = [0,0]
-                print("collision")
+            if solve != None:
+                hitbox = solve[0]
+                collision_line = solve[1]
+                collision_with_horizontal = collision_line[1][1] == 0
 
+                if collision_with_horizontal:
+                    self.position[0] = new_position[0]
+                    self.velocity[1] = 0
+                    self.acceleration[1] = 0
+
+                else:
+                    self.position[1] = new_position[1]
+                    self.velocity[0] = 0
+                    self.acceleration[0] = 0
+
+            else:
+                self.position = new_position
+
+            
         # print(self.position)
 
         return self.position
