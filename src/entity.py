@@ -41,8 +41,22 @@ class Entity():
         if -0.01 <= self.velocity[0] <= 0.01:
             self.velocity[0] = 0
 
-        self.position[0] += self.velocity[0] * delta_time * 60
-        self.position[1] += self.velocity[1] * delta_time * 60
+        # self.position[0] += self.velocity[0] * delta_time * 60
+        # self.position[1] += self.velocity[1] * delta_time * 60
+
+        new_position = self.position[:]
+        new_position[0] += self.velocity[0] * delta_time * 60
+        new_position[1] += self.velocity[1] * delta_time * 60
+
+
+        if new_position[0]-self.position[0] != 0:
+            solve = self.level.check_for_collisions_on_path(self, self.position, new_position)
+            if solve == None:
+                self.position = new_position
+            else:
+                self.velocity = [0, 0]
+                self.acceleration = [0,0]
+                print("collision")
 
         # print(self.position)
 

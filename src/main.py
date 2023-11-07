@@ -31,10 +31,10 @@ def main() -> int:
 
     globalStateManager.screen = screen
 
-    player = Player((32, 32), [500, 500], 3, 0.1)
+    player = Player((32, 32), [500, 600], 3, 0.1)
     load_level("../data/levels/testStage.json")
     player.set_level(globalStateManager.level)
-    player.setIsAffectedByGravity(False)
+    player.setIsAffectedByGravity(True)
     main_camera = Camera(player, globalStateManager.level, (window_width, window_height), 5)
     globalStateManager.camera = main_camera
 
@@ -74,13 +74,10 @@ def main() -> int:
             player.velocity[1] -= 5
 
     
-        old_player_position = player.position[:]
+        # old_player_position = player.position[:]
         new_player_position = player.move(delta_time)
 
-        if new_player_position[0]-old_player_position[0] != 0:
-            solve = globalStateManager.level.check_for_collisions_on_path(player, old_player_position, new_player_position)
-            if solve != None:
-                last_collision = solve
+        
 
 
         screen.fill(globalStateManager.settings["colours"]["black"])
