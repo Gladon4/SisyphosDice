@@ -17,6 +17,6 @@
   ],
   "brightness": 0.25,
   "gravity": 1,
-  "texture": "../data/levels/testStage.png",
+  "texture": "resources/levels/testStage.png",
   "size": [2000, 800]
 }

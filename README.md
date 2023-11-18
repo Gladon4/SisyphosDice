@@ -1,2 +1,2 @@
 # Sisyphos Dice
-A small game developed with pygame to test stuff.
+A small game developed with raylib in C to learn stuff.
