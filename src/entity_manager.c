@@ -53,6 +53,7 @@ void UpdateEntities(EntityManager entityManager, float gravity, float deltaTime)
     for (int i=0; i<entityManager.numberOfEntities; i++)
     {
         UpdateEntity(entityManager.entities[i], gravity, deltaTime);
+        entityManager.entities[i]->onGround = false;
     }
 
     _UpdateEntityChunks(entityManager);
@@ -69,7 +70,6 @@ void _CollisionPreventionEntityLevelHitbox (Chunk chunk)
 {
     for (int i=0; i<chunk.numberOfEntities; i++)
     {
-        chunk.entitiesInChunk[i]->onGround = false;
         for (int j=0; j<chunk.numberOfLevelHitboxes; j++)
         {
             CollisionPreventionEntityHitbox(chunk.entitiesInChunk[i], chunk.levelHitboxesInChunk[j]);
