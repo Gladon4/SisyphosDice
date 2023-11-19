@@ -14,6 +14,7 @@
 		"raymath.h": "c",
 		"hitbox.h": "c",
 		"collision_system.h": "c",
-		"functional": "c"
+		"functional": "c",
+		"camera.h": "c"
 	}
 }

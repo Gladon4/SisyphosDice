@@ -2,9 +2,12 @@
 #include "level.h"
 
 #include "raymath.h"
+#include "stdlib.h"
 
-Entity CreateEntity(Vector2 position, char* tag, bool isAffectedByGravity, float mass, Vector2 size, float drag) {
-    return (Entity)
+Entity* CreateEntity(Vector2 position, char* tag, bool isAffectedByGravity, float mass, Vector2 size, float drag, int uuid) {
+    Entity* entity = malloc(sizeof(Entity));
+
+    entity[0] = (Entity)
     {
         .position = position,
         .isAffectedByGravity = isAffectedByGravity,
@@ -26,8 +29,12 @@ Entity CreateEntity(Vector2 position, char* tag, bool isAffectedByGravity, float
                 .height = size.y
             },
             .tag = tag
-        }
+        },
+
+        .uuid = uuid
     };
+    
+    return entity;
 }
 
 void UpdateEntity(Entity* entity, float gravity, float deltaTime)

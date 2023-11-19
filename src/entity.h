@@ -18,9 +18,11 @@ typedef struct Entity
     Vector2 position;
     Vector2 velocity;
     Vector2 acceleration;
+
+    int uuid;
 } Entity;
 
-Entity CreateEntity(Vector2 position, char* tag, bool isAffectedByGravity, float mass, Vector2 size, float drag);
+Entity* CreateEntity(Vector2 position, char* tag, bool isAffectedByGravity, float mass, Vector2 size, float drag, int uuid);
 
 void UpdateEntity(Entity* entity, float gravity, float deltaTime);
 void DrawEntity(Entity entity, Vector2 position);
