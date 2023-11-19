@@ -1,10 +1,17 @@
 #include "entity_manager.h"
 #include "stdlib.h"
+#include "chunk.h"
+#include "collision_system.h"
+
+
+void _CollisionPreventionEntityLevelHitbox (Chunk chunk);
+void _CollisionPreventionEntityEntity (Chunk chunk);
+void _UpdateEntityChunks (EntityManager entityManager);
 
 EntityManager CreateEntityManager(Level level)
 {
     return (EntityManager) {
-        .entities = calloc(100, sizeof(Entity*)),
+        .entities = calloc(1000, sizeof(Entity*)),
         .numberOfEntities = 0,
         .currentUUID = 0,
         .level = level
@@ -46,25 +53,62 @@ void UpdateEntities(EntityManager entityManager, float gravity, float deltaTime)
     for (int i=0; i<entityManager.numberOfEntities; i++)
     {
         UpdateEntity(entityManager.entities[i], gravity, deltaTime);
-        _CollisionPreventionEntityLevelHitbox(entityManager.entities[i], entityManager.level);
-        _CollisionPreventionEntityEntity(entityManager.entities[i], entityManager.level);
+    }
+
+    _UpdateEntityChunks(entityManager);
+    
+    for (int i=0; i<entityManager.level.numberOfChunks; i++)
+    {
+        _CollisionPreventionEntityLevelHitbox(entityManager.level.chunks[i]);
+        _CollisionPreventionEntityEntity(entityManager.level.chunks[i]);
     }
 }
 
 
-void _CollisionPreventionEntityLevelHitbox (Entity* entity, Level level)
+void _CollisionPreventionEntityLevelHitbox (Chunk chunk)
 {
-
+    for (int i=0; i<chunk.numberOfEntities; i++)
+    {
+        chunk.entitiesInChunk[i]->onGround = false;
+        for (int j=0; j<chunk.numberOfLevelHitboxes; j++)
+        {
+            CollisionPreventionEntityHitbox(chunk.entitiesInChunk[i], chunk.levelHitboxesInChunk[j]);
+            if (CheckForOnGround(*chunk.entitiesInChunk[i], chunk.levelHitboxesInChunk[j])) 
+            {
+                chunk.entitiesInChunk[i]->onGround = true;
+            }
+        }
+    }
 }
 
-void _CollisionPreventionEntityEntity (Entity* entity, Level level)
+void _CollisionPreventionEntityEntity (Chunk chunk)
 {
-
+    // TODO
 }
 
-void _UpdateEntityChunk (Entity* entity, Level level)
+void _UpdateEntityChunks (EntityManager entityManager)
 {
+    for (int i=0; i<entityManager.level.numberOfChunks; i++)
+    {
+        free(entityManager.level.chunks[i].entitiesInChunk); 
+        entityManager.level.chunks[i].entitiesInChunk = calloc(1000, sizeof(Entity*));
+
+        entityManager.level.chunks[i].numberOfEntities = 0;
+    }
     
+    for (int i=0; i<entityManager.numberOfEntities; i++)
+    {
+        int leftChunk = (int)(entityManager.entities[i]->position.x - entityManager.entities[i]->size.x/2)/entityManager.level.chunkSize;
+        int rightChunk = (int)(entityManager.entities[i]->position.x + entityManager.entities[i]->size.x/2)/entityManager.level.chunkSize;
+    
+        entityManager.level.chunks[leftChunk].entitiesInChunk[entityManager.level.chunks[leftChunk].numberOfEntities] = entityManager.entities[i];
+        entityManager.level.chunks[leftChunk].numberOfEntities++;
+        
+        if (rightChunk != leftChunk) {
+            entityManager.level.chunks[rightChunk].entitiesInChunk[entityManager.level.chunks[rightChunk].numberOfEntities] = entityManager.entities[i];
+            entityManager.level.chunks[rightChunk].numberOfEntities++;
+        }
+    }
 }
 
 

@@ -35,9 +35,6 @@ int main()
     
     char tag[] = "player";
     Entity* player = EntityManagerCreateEntity(&entityManager, (Vector2){250, 50}, tag, false, 1, (Vector2){50, 50}, 0);
-    // Entity* player = CreateEntity((Vector2){250, 50}, "player", false, 1, (Vector2){50, 50}, 0, 100);
-    
-    // AddEntityToEntityManager(&entityManager, player);
     
     MainCamera mainCamera = CreateCamera(player->position, screeSize, player, 5);
     
@@ -53,55 +50,13 @@ int main()
         if (IsKeyPressed(KEY_F8)) {SetTargetFPS(60);}
         if (IsKeyPressed(KEY_F9)) {SetTargetFPS(120);}
         if (IsKeyPressed(KEY_F10)) {SetTargetFPS(240);}
-        if (IsKeyPressed(KEY_F11)) {SetTargetFPS(0);}
-
-        if (IsKeyPressed(KEY_F5))
-        {
-            RemoveEntityFromEntityManager(&entityManager, player);
-        }
-        if (IsKeyPressed(KEY_F6))
-        {
-            AddEntityToEntityManager(&entityManager, player);
-        }
-        
+        if (IsKeyPressed(KEY_F11)) {SetTargetFPS(0);}        
 
         KeyBoardInput(player);
 
         float deltaTime = GetFrameTime();
 
-        Vector2 startPosition = player->position;
         UpdateEntities(entityManager, testLevel.gravity, deltaTime);
-        // UpdateEntity(&player, testLevel.gravity, deltaTime);
-        Vector2 endPosition = player->position;      
-        int startChunk;
-        int endChunk;
-
-        if (endPosition.x < startPosition.x) 
-        {
-            startChunk = (int)(endPosition.x - player->size.x/2)/testLevel.chunkSize;
-            endChunk = (int)(startPosition.x + player->size.x/2)/testLevel.chunkSize;
-        }
-        else
-        {
-            startChunk = (int)(startPosition.x - player->size.x/2)/testLevel.chunkSize;
-            endChunk = (int)(endPosition.x + player->size.x/2)/testLevel.chunkSize;
-        }
-
-
-        player->onGround = false;
-        for (int i=startChunk; i<=endChunk; i++)
-        {
-            for (int j=0; j<testLevel.chunks[i].numberOfLevelHitboxes; j++)
-            {
-                CollisionPreventionEntityHitbox(player, testLevel.chunks[i].levelHitboxesInChunk[j]);
-                if (CheckForOnGround(*player, testLevel.chunks[i].levelHitboxesInChunk[j])) 
-                {
-                    player->onGround = true;
-                }
-            }
-        }
-        
-
         UpdateCameraPosition(&mainCamera, testLevel, deltaTime);
         Vector2 cameraDrawPosition = Vector2Subtract(Vector2Scale(mainCamera.size, 0.5), mainCamera.position);
 
@@ -117,7 +72,6 @@ int main()
         }
 
         DrawEntities(entityManager, cameraDrawPosition);
-        // DrawEntity(*player, cameraDrawPosition);
 
         EndDrawing();
 

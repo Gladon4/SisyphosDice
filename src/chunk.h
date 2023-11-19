@@ -9,7 +9,7 @@
 typedef struct Chunk
 {
     Hitbox* levelHitboxesInChunk;
-    Entity* entitiesInChunk;
+    Entity** entitiesInChunk;
     int numberOfLevelHitboxes;
     int numberOfEntities;
 } Chunk;
