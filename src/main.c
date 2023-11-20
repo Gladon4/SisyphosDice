@@ -12,9 +12,9 @@
 
 void KeyBoardInput(Entity* player)
 {
-    if (IsKeyDown(KEY_A)) {player->velocity.x = -10;}
-    else if (IsKeyDown(KEY_D)) {player->velocity.x = 10;}
-    else {player->velocity.x = 0;}
+    if (IsKeyDown(KEY_A)) {player->velocity.x -= 1.2;}
+    if (IsKeyDown(KEY_D)) {player->velocity.x += 1.2;}
+    // else {player->velocity.x = 0;}
 
     if (IsKeyDown(KEY_SPACE) && player->onGround) 
     {
@@ -34,7 +34,8 @@ int main()
     EntityManager entityManager = CreateEntityManager(testLevel);
     
     char tag[] = "player";
-    Entity* player = EntityManagerCreateEntity(&entityManager, (Vector2){250, 50}, tag, false, 1, (Vector2){50, 50}, 0);
+    Entity* player = EntityManagerCreateEntity(&entityManager, (Vector2){250, 50}, tag, false, 1, (Vector2){50, 50}, 0.1);
+    EntityManagerCreateEntity(&entityManager, (Vector2){500, 50}, tag, false, 1, (Vector2){50, 50}, 0.1);
     
     MainCamera mainCamera = CreateCamera(player->position, screeSize, player, 5);
     

@@ -57,6 +57,17 @@ void CollisionPreventionEntityHitbox(Entity* entity, Hitbox hitbox)
     }
 }
 
+void CollisionPreventionEntityEntity(Entity* entity1, Entity* entity2)
+{
+    if (!CheckCollisionRecs(entity1->hitbox.rect, entity2->hitbox.rect)) {
+        return;
+    }
+
+    Rectangle collisionRectangle = GetCollisionRec(entity1->hitbox.rect, entity2->hitbox.rect);
+
+    
+}
+
 bool CheckForOnGround(Entity entity, Hitbox hitbox)
 {
     Rectangle rectCast = (Rectangle) {

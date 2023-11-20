@@ -45,6 +45,9 @@ void UpdateEntity(Entity* entity, float gravity, float deltaTime)
     }
 
     entity->velocity = Vector2Add(entity->velocity, Vector2Scale(entity->acceleration, deltaTime * 60));
+    
+    entity->velocity.x -= entity->velocity.x * entity->drag;
+
     entity->position = Vector2Add(entity->position, Vector2Scale(entity->velocity, deltaTime * 60));
 
     entity->hitbox.rect = (Rectangle) {
