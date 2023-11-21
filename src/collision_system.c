@@ -59,6 +59,9 @@ void CollisionPreventionEntityHitbox(Entity* entity, Hitbox hitbox)
 
 void CollisionPreventionEntityEntity(Entity* entity1, Entity* entity2)
 {
+    if (entity1->onGround) {return;}
+    return CollisionPreventionEntityHitbox(entity1, entity2->hitbox);
+
     if (!CheckCollisionRecs(entity1->hitbox.rect, entity2->hitbox.rect)) {
         return;
     }

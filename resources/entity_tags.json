@@ -1,0 +1,11 @@
+{
+    "player": {
+        "standable": false
+    },
+    "dice": {
+        "standable": true
+    },
+    "enemy": {
+        "standable": false
+    }
+}

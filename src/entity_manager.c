@@ -1,5 +1,6 @@
 #include "entity_manager.h"
 #include "stdlib.h"
+#include "string.h"
 #include "chunk.h"
 #include "collision_system.h"
 
@@ -7,6 +8,7 @@
 void _CollisionPreventionEntityLevelHitbox (Chunk chunk);
 void _CollisionPreventionEntityEntity (Chunk chunk);
 void _UpdateEntityChunks (EntityManager entityManager);
+bool _IsEntityStandable (Entity* entity);
 
 EntityManager CreateEntityManager(Level level)
 {
@@ -20,7 +22,11 @@ EntityManager CreateEntityManager(Level level)
 
 Entity* EntityManagerCreateEntity(EntityManager* entityManager, Vector2 position, char* tag, bool isAffectedByGravity, float mass, Vector2 size, float drag)
 {
-    Entity* entity = CreateEntity(position, tag, isAffectedByGravity, mass, size, drag, entityManager->currentUUID);
+    char tagpointer[100];
+
+    strncpy(tagpointer, tag, 100);
+
+    Entity* entity = CreateEntity(position, tagpointer, isAffectedByGravity, mass, size, drag, entityManager->currentUUID);
     
     entityManager->entities[entityManager->numberOfEntities] = entity;
     entityManager->numberOfEntities++;
@@ -60,8 +66,8 @@ void UpdateEntities(EntityManager entityManager, float gravity, float deltaTime)
     
     for (int i=0; i<entityManager.level.numberOfChunks; i++)
     {
-        _CollisionPreventionEntityEntity(entityManager.level.chunks[i]);
         _CollisionPreventionEntityLevelHitbox(entityManager.level.chunks[i]);
+        _CollisionPreventionEntityEntity(entityManager.level.chunks[i]);
     }
 }
 
@@ -90,9 +96,21 @@ void _CollisionPreventionEntityEntity (Chunk chunk)
             if (i == j) {continue;}
             
             CollisionPreventionEntityEntity(chunk.entitiesInChunk[i], chunk.entitiesInChunk[j]);
-            
+            if (CheckForOnGround(*chunk.entitiesInChunk[i], chunk.entitiesInChunk[j]->hitbox)) {
+                chunk.entitiesInChunk[i]->onGround = true;
+            }      
         }
     }
+}
+
+bool _IsEntityStandable (Entity* entity)
+{
+    if (entity->onGround)
+    {
+        return true;
+    }
+    
+    return false;
 }
 
 void _UpdateEntityChunks (EntityManager entityManager)
