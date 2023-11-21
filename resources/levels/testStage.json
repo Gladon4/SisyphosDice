@@ -16,7 +16,7 @@
     {"x": 1120, "y": 410, "colour": [200, 200, 255], "intesity": 20, "flicker_strength": 0.75}
   ],
   "brightness": 0.25,
-  "gravity": 1,
+  "gravity": 1.0,
   "texture": "resources/levels/testStage.png",
   "size": [2000, 800]
 }

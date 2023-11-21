@@ -64,15 +64,17 @@ int main()
         ClearBackground(RAYWHITE);
         DrawLevel(testLevel);
 
-        if (showFPS) {DrawFPS(10, 10);}
+        DrawEntities(entityManager);
+        
         if (showHitboxes) {
             DrawHitboxes(testLevel);
             DrawChunksBorders(testLevel);
         }
 
-        DrawEntities(entityManager);
-
         EndMode2D();
+        
+        if (showFPS) {DrawFPS(10, 10);}
+        
         EndDrawing();
 
     }

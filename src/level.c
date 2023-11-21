@@ -1,78 +1,94 @@
 #include "level.h"
 
 #include "raylib.h"
-#include "jsense.h"
 #include <stdio.h>
 #include <string.h>
+#include "cJSON.h"
+#include <sys/stat.h>
+#include <sys/types.h>
+#include "stdlib.h"
+
 
 Level CreateLevel(char* path, char* name, int chunkSize)
 {
-    JSENSE *json = jse_from_file(path);
+    FILE *json_file_pointer = fopen(path, "r");
+    if (json_file_pointer == NULL)
+    {
+        // laod error handling
+    }
 
-    char *texture_path = jse_get(json, "texture");
-    float gravity = atof(jse_get(json, "gravity"));
-    float brightness = atof(jse_get(json, "brightness"));
+    struct stat fileStats; 
 
-    int width = atoi(jse_get(json, "size.[0]"));
-    int height = atoi(jse_get(json, "size.[1]"));
+    if (stat(path, &fileStats) != 0)
+    {
+        // file stat error handling
+    }
 
-    int i = 0;
-    char query[30];
+    int fileSize = fileStats.st_size;
+    char dataBuffer[fileSize];
+    fread(dataBuffer, 1, sizeof(dataBuffer), json_file_pointer); 
 
-    int numberOfChunks = (int)(width / chunkSize);
+    fclose(json_file_pointer);
+
+    
+    cJSON *level_json = cJSON_Parse(dataBuffer);
+
+    const cJSON *brightness = NULL;
+    const cJSON *gravity = NULL;
+    const cJSON *texture_path = NULL;
+    const cJSON *size = NULL;
+    
+    const cJSON *hitboxes = NULL;
+
+    brightness = cJSON_GetObjectItemCaseSensitive(level_json, "brightness");
+    gravity = cJSON_GetObjectItemCaseSensitive(level_json, "gravity");
+    texture_path = cJSON_GetObjectItemCaseSensitive(level_json, "texture");
+    size = cJSON_GetObjectItemCaseSensitive(level_json, "size");
+
+    Vector2 sizeVector = (Vector2) { cJSON_GetArrayItem(size, 0)->valuedouble, cJSON_GetArrayItem(size, 1)->valuedouble };
+    
+    hitboxes = cJSON_GetObjectItemCaseSensitive(level_json, "hitboxes");
+    int numberOfHitboxes = cJSON_GetArraySize(hitboxes);
+
+    int numberOfChunks = (int)(sizeVector.x / chunkSize);
     Chunk* chunks = (Chunk*)calloc(numberOfChunks, sizeof(Chunk));
     int* numberOfLevelHitboxesInChunks = (int*)calloc(numberOfChunks, sizeof(int));
 
-    sprintf(query, "hitboxes.[%d]", i);
-
-    while (jse_get(json, query))
+    for (int i=0; i<numberOfHitboxes; i++)
     {
-        sprintf(query, "hitboxes.[%d].x", i);
-        int x = tec_string_to_int(jse_get(json, query));
+        cJSON *hitboxObject = cJSON_GetArrayItem(hitboxes, i);
 
-        sprintf(query, "hitboxes.[%d].width", i);
-        int width = tec_string_to_int(jse_get(json, query));
-        
+        int x = cJSON_GetObjectItemCaseSensitive(hitboxObject, "x")->valueint;
+        int width = cJSON_GetObjectItemCaseSensitive(hitboxObject, "width")->valueint;
+
         int startingChunk = (int)(x / chunkSize);
         for (int j=startingChunk; j*chunkSize<x+width; j++) 
         {
             numberOfLevelHitboxesInChunks[j] += 1;
         }
-
-        i++;
-        sprintf(query, "hitboxes.[%d]", i);
     }
 
-    for (int j=0; j<numberOfChunks; j++) 
+    for (int i=0; i<numberOfChunks; i++) 
     {
-        if (numberOfLevelHitboxesInChunks[j] == 0)
+        if (numberOfLevelHitboxesInChunks[0] == 0)
         {
             continue;
         }
 
-        chunks[j].numberOfLevelHitboxes = 0;
-        chunks[j].levelHitboxesInChunk = calloc(numberOfLevelHitboxesInChunks[j], sizeof(Hitbox));
-        // printf("\n Number of Hitboxes in Chunk %d: %d", j, numberOfLevelHitboxesInChunks[j]);
+        chunks[i].numberOfLevelHitboxes = 0;
+        chunks[i].levelHitboxesInChunk = calloc(numberOfLevelHitboxesInChunks[i], sizeof(Hitbox));
     }
-    // printf("\n");
 
-
-    for(int j = 0; j < i; j++)
+    for (int i=0; i<numberOfHitboxes; i++)
     {
-        sprintf(query, "hitboxes.[%d].x", j);
-        int x = tec_string_to_int(jse_get(json, query));
+        cJSON *hitboxObject = cJSON_GetArrayItem(hitboxes, i);
 
-        sprintf(query, "hitboxes.[%d].y", j);
-        int y = tec_string_to_int(jse_get(json, query));
-
-        sprintf(query, "hitboxes.[%d].width", j);
-        int width = tec_string_to_int(jse_get(json, query));
-
-        sprintf(query, "hitboxes.[%d].height", j);
-        int height = tec_string_to_int(jse_get(json, query));
-
-        sprintf(query, "hitboxes.[%d].tag", j);
-        char* tag = jse_get(json, query);
+        int x = cJSON_GetObjectItemCaseSensitive(hitboxObject, "x")->valueint;
+        int y = cJSON_GetObjectItemCaseSensitive(hitboxObject, "y")->valueint;
+        int width = cJSON_GetObjectItemCaseSensitive(hitboxObject, "width")->valueint;
+        int height = cJSON_GetObjectItemCaseSensitive(hitboxObject, "height")->valueint;
+        int tag_len = strlen(cJSON_GetObjectItemCaseSensitive(hitboxObject, "tag")->valuestring);
+        char *tag = cJSON_GetObjectItemCaseSensitive(hitboxObject, "tag")->valuestring;
 
         Hitbox hitbox = {
             .rect = (Rectangle) {
@@ -81,28 +97,35 @@ Level CreateLevel(char* path, char* name, int chunkSize)
                 .width = width,
                 .height = height
             },
-            .tag = tag
+            .tag = (char*)malloc(tag_len)
         };
 
+        strcpy(hitbox.tag, tag);
+
         int startingChunk = (int)(x / chunkSize);
-        for (int k=startingChunk; k*chunkSize<x+width; k++) 
+        for (int j=startingChunk; j*chunkSize<x+width; j++) 
         {
-            chunks[k].levelHitboxesInChunk[chunks[k].numberOfLevelHitboxes] = hitbox;
-            chunks[k].numberOfLevelHitboxes++;
+            chunks[j].levelHitboxesInChunk[chunks[j].numberOfLevelHitboxes] = hitbox;
+            chunks[j].numberOfLevelHitboxes++;
         }
     }
+
+    Texture2D texture = LoadTexture(texture_path->valuestring);
+
+    cJSON_Delete(level_json);
 
     return (Level)
     {
         .chunkSize = chunkSize,
-        .texture = LoadTexture(texture_path),
-        .gravity = gravity,
+        .brightness = brightness->valuedouble,
+        .gravity = gravity->valuedouble,
+        .texture = texture,
+        .size = sizeVector,
         .name = name,
-        .brightness = brightness,
-        .size = (Vector2){width, height},
         .chunks = chunks,
         .numberOfChunks = numberOfChunks
     };
+
 }
 
 void DrawLevel(Level level)
