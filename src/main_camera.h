@@ -1,5 +1,5 @@
-#ifndef CAMERA_H_
-#define CAMERA_H_
+#ifndef MAIN_CAMERA_H_
+#define MAIN_CAMERA_H_
 
 #include "raylib.h"
 #include "entity.h"

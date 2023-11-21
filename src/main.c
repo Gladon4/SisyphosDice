@@ -7,7 +7,7 @@
 #include "collision_system.h"
 #include "level.h"
 #include "entity.h"
-#include "camera.h"
+#include "main_camera.h"
 
 
 void KeyBoardInput(Entity* player)

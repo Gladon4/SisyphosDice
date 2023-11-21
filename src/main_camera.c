@@ -1,4 +1,4 @@
-#include "camera.h"
+#include "main_camera.h"
 #include "raymath.h"
 
 MainCamera CreateMainCamera(Vector2 startPosition, Vector2 size, Entity* target, float speed)
