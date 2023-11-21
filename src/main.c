@@ -35,8 +35,8 @@ int main()
     Entity* player = EntityManagerCreateEntity(&entityManager, (Vector2){250, 50}, "player^", false, 1, (Vector2){50, 50}, 0.1);
     EntityManagerCreateEntity(&entityManager, (Vector2){400, 50}, "dice", false, 1, (Vector2){150, 150}, 0.1);
     
-    MainCamera mainCamera = CreateCamera(player->position, screeSize, player, 5);
-    
+    MainCamera mainCamera = CreateMainCamera(Vector2Zero(), screeSize, player, 3);
+
 
     SetTargetFPS(60);
     bool showFPS = false;
@@ -51,27 +51,28 @@ int main()
         if (IsKeyPressed(KEY_F10)) {SetTargetFPS(240);}
         if (IsKeyPressed(KEY_F11)) {SetTargetFPS(0);}        
 
-        KeyBoardInput(player);
+        KeyBoardInput(player); 
 
         float deltaTime = GetFrameTime();
 
         UpdateEntities(entityManager, testLevel.gravity, deltaTime);
         UpdateCameraPosition(&mainCamera, testLevel, deltaTime);
-        Vector2 cameraDrawPosition = Vector2Subtract(Vector2Scale(mainCamera.size, 0.5), mainCamera.position);
 
         BeginDrawing();
+        BeginMode2D(mainCamera.camera);
         
         ClearBackground(RAYWHITE);
-        DrawLevel(testLevel, cameraDrawPosition);
+        DrawLevel(testLevel);
 
         if (showFPS) {DrawFPS(10, 10);}
         if (showHitboxes) {
-            DrawHitboxes(testLevel, cameraDrawPosition);
-            DrawChunksBorders(testLevel,cameraDrawPosition);
+            DrawHitboxes(testLevel);
+            DrawChunksBorders(testLevel);
         }
 
-        DrawEntities(entityManager, cameraDrawPosition);
+        DrawEntities(entityManager);
 
+        EndMode2D();
         EndDrawing();
 
     }

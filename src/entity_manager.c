@@ -139,10 +139,10 @@ void _UpdateEntityChunks (EntityManager entityManager)
 }
 
 
-void DrawEntities(EntityManager entityManager, Vector2 position)
+void DrawEntities(EntityManager entityManager)
 {
     for (int i=0; i<entityManager.numberOfEntities; i++)
     {
-        DrawEntity(*entityManager.entities[i], position);
+        DrawEntity(*entityManager.entities[i]);
     }
 }

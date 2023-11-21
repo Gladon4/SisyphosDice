@@ -25,7 +25,7 @@ typedef struct Entity
 Entity* CreateEntity(Vector2 position, char* tag, bool isAffectedByGravity, float mass, Vector2 size, float drag, int uuid);
 
 void UpdateEntity(Entity* entity, float gravity, float deltaTime);
-void DrawEntity(Entity entity, Vector2 position);
+void DrawEntity(Entity entity);
 
 
 #endif

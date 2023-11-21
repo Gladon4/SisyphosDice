@@ -105,12 +105,12 @@ Level CreateLevel(char* path, char* name, int chunkSize)
     };
 }
 
-void DrawLevel(Level level, Vector2 position)
+void DrawLevel(Level level)
 {
-    DrawTexture(level.texture, position.x, position.y, WHITE);
+    DrawTexture(level.texture, 0, 0, WHITE);
 }
 
-void DrawHitboxes(Level level, Vector2 position)
+void DrawHitboxes(Level level)
 {
     for (int i=0; i<level.numberOfChunks; i++) {
         for (int j=0; j<level.chunks[i].numberOfLevelHitboxes; j++)
@@ -119,18 +119,16 @@ void DrawHitboxes(Level level, Vector2 position)
             if (!strcmp(level.chunks[i].levelHitboxesInChunk[j].tag, "jump-through")) {color = GREEN;}
 
             Rectangle rect = level.chunks[i].levelHitboxesInChunk[j].rect;
-            rect.x += position.x;
-            rect.y += position.y;
 
             DrawRectangleLinesEx(rect, 2, color);
         } 
     }
 }
 
-void DrawChunksBorders(Level level, Vector2 position)
+void DrawChunksBorders(Level level)
 {
     for (int i=0; i<level.numberOfChunks; i++)
     {
-        DrawLine(i*level.chunkSize + position.x, 0 + position.y, i*level.chunkSize + position.x, level.size.y + position.y, PURPLE);
+        DrawLine(i*level.chunkSize, 0, i*level.chunkSize, level.size.y, PURPLE);
     }
 }

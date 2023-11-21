@@ -22,6 +22,6 @@ void AddEntityToEntityManager(EntityManager* entityManager, Entity* entity);
 void RemoveEntityFromEntityManager(EntityManager* entityManager, Entity* entity);
 
 void UpdateEntities(EntityManager entityManager, float gravity, float deltaTime);
-void DrawEntities(EntityManager entityManager, Vector2 position);
+void DrawEntities(EntityManager entityManager);
 
 #endif

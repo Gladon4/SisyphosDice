@@ -58,7 +58,7 @@ void UpdateEntity(Entity* entity, float gravity, float deltaTime)
     };
 }
 
-void DrawEntity(Entity entity, Vector2 position)
+void DrawEntity(Entity entity)
 {
-    DrawRectangle(entity.position.x - (entity.size.x / 2) + position.x, entity.position.y - (entity.size.y / 2) + position.y, entity.size.x, entity.size.y, RED);
+    DrawRectangle(entity.position.x - (entity.size.x / 2), entity.position.y - (entity.size.y / 2), entity.size.x, entity.size.y, RED);
 }

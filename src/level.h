@@ -22,10 +22,10 @@ typedef struct Level
 
 Level CreateLevel(char* path, char* name, int chunkSize);
 
-void DrawLevel(Level level, Vector2 position);
+void DrawLevel(Level level);
 
-void DrawHitboxes(Level level, Vector2 position);
+void DrawHitboxes(Level level);
 
-void DrawChunksBorders(Level level, Vector2 position);
+void DrawChunksBorders(Level level);
 
 #endif
