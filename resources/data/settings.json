@@ -1,0 +1,17 @@
+{
+    "window":{
+        "name": "Sisyphos Dice",
+        "width": 1000,
+        "height": 800
+    },
+    "paths": {
+        "font": "../data/small_font.png"
+    },
+    "colours": {
+        "black": [0, 0, 0],
+        "colour_key": [0, 255, 0]
+    },
+    "game": {
+        "fixed_step_size": 0.016
+    }
+}

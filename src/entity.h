@@ -20,6 +20,7 @@ typedef struct Entity
     Vector2 acceleration;
 
     int uuid;
+    int standable;
 } Entity;
 
 Entity* CreateEntity(Vector2 position, char* tag, bool isAffectedByGravity, float mass, Vector2 size, float drag, int uuid);

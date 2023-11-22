@@ -32,8 +32,8 @@ int main()
     Level testLevel = CreateLevel("resources/levels/testStage.json", "Test Stage", 500);
     EntityManager entityManager = CreateEntityManager(testLevel);
     
-    Entity* player = EntityManagerCreateEntity(&entityManager, (Vector2){250, 50}, "player^", false, 1, (Vector2){50, 50}, 0.1);
-    EntityManagerCreateEntity(&entityManager, (Vector2){400, 50}, "dice", false, 1, (Vector2){150, 150}, 0.1);
+    Entity* player = EntityManagerCreateEntity(&entityManager, (Vector2){250, 50}, "player", true, 1, (Vector2){50, 50}, 0.1);
+    EntityManagerCreateEntity(&entityManager, (Vector2){400, 50}, "dice", true, 1, (Vector2){150, 150}, 0.1);
     
     MainCamera mainCamera = CreateMainCamera(Vector2Zero(), screeSize, player, 3);
 

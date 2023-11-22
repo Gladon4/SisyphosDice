@@ -96,7 +96,7 @@ void _CollisionPreventionEntityEntity (Chunk chunk)
             if (i == j) {continue;}
             
             CollisionPreventionEntityEntity(chunk.entitiesInChunk[i], chunk.entitiesInChunk[j]);
-            if (CheckForOnGround(*chunk.entitiesInChunk[i], chunk.entitiesInChunk[j]->hitbox)) {
+            if (CheckForOnGround(*chunk.entitiesInChunk[i], chunk.entitiesInChunk[j]->hitbox) && _IsEntityStandable(chunk.entitiesInChunk[j])) {
                 chunk.entitiesInChunk[i]->onGround = true;
             }      
         }
@@ -105,7 +105,7 @@ void _CollisionPreventionEntityEntity (Chunk chunk)
 
 bool _IsEntityStandable (Entity* entity)
 {
-    if (entity->onGround)
+    if (entity->onGround && entity->standable)
     {
         return true;
     }
