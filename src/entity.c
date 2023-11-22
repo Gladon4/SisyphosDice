@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include "stdlib.h"
 #include <stdio.h>
+#include "string.h"
 
 Entity* CreateEntity(Vector2 position, char* tag, bool isAffectedByGravity, float mass, Vector2 size, float drag, int uuid) {
     Entity* entity = malloc(sizeof(Entity));
@@ -33,13 +34,25 @@ Entity* CreateEntity(Vector2 position, char* tag, bool isAffectedByGravity, floa
     
     fclose(json_file_pointer);
 
+
     cJSON *tags_json = cJSON_Parse(dataBuffer);
 
-    const cJSON *standable = cJSON_GetObjectItem(cJSON_GetObjectItem(tags_json, tag)->child, "standable");
+    int numberOfTags = cJSON_GetArraySize(cJSON_GetObjectItem(tags_json, tag));
+    char *tags = malloc(numberOfTags*20);
+    strcpy(tags, "");
+    
+    cJSON *current_element = NULL;
+
+    cJSON_ArrayForEach(current_element, cJSON_GetObjectItem(tags_json, tag))
+    {
+        if (cJSON_GetObjectItem(cJSON_GetObjectItem(tags_json, tag), current_element->string)->valueint)
+        {
+            strcat(tags, "_");
+            strcat(tags, current_element->string);
+        }
+    }
 
     cJSON_Delete(tags_json);
-
-    int stand = 0;
 
     entity[0] = (Entity)
     {
@@ -67,7 +80,7 @@ Entity* CreateEntity(Vector2 position, char* tag, bool isAffectedByGravity, floa
         },
 
         .uuid = uuid,
-        .standable = standable->valueint
+        .tags = tags
     };
     
     return entity;
@@ -98,3 +111,20 @@ void DrawEntity(Entity entity)
 {
     DrawRectangle(entity.position.x - (entity.size.x / 2), entity.position.y - (entity.size.y / 2), entity.size.x, entity.size.y, RED);
 }
+
+bool EntityHasTag(Entity* entity, char* tag)
+{
+    char* token = strtok(entity->tags, "_");
+
+    while (token != NULL)
+    {
+        if (!strcmp(token, tag))
+        {
+            return true;
+        }
+        token = strtok(NULL, "_");
+    }
+
+    return false;
+}
+

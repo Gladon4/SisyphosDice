@@ -20,7 +20,7 @@ typedef struct Entity
     Vector2 acceleration;
 
     int uuid;
-    int standable;
+    char* tags;
 } Entity;
 
 Entity* CreateEntity(Vector2 position, char* tag, bool isAffectedByGravity, float mass, Vector2 size, float drag, int uuid);
@@ -28,5 +28,6 @@ Entity* CreateEntity(Vector2 position, char* tag, bool isAffectedByGravity, floa
 void UpdateEntity(Entity* entity, float gravity, float deltaTime);
 void DrawEntity(Entity entity);
 
+bool EntityHasTag(Entity* entity, char* tag);
 
 #endif

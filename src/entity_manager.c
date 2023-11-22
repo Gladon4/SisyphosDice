@@ -105,7 +105,7 @@ void _CollisionPreventionEntityEntity (Chunk chunk)
 
 bool _IsEntityStandable (Entity* entity)
 {
-    if (entity->onGround && entity->standable)
+    if (entity->onGround && EntityHasTag(entity, "standable"))
     {
         return true;
     }
