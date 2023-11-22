@@ -37,19 +37,15 @@ Entity* CreateEntity(Vector2 position, char* tag, bool isAffectedByGravity, floa
 
     cJSON *tags_json = cJSON_Parse(dataBuffer);
 
-    int numberOfTags = cJSON_GetArraySize(cJSON_GetObjectItem(tags_json, tag));
+    cJSON *tag_list = cJSON_GetObjectItem(tags_json, tag);
+    int numberOfTags = cJSON_GetArraySize(tag_list);
     char *tags = malloc(numberOfTags*20);
     strcpy(tags, "");
     
-    cJSON *current_element = NULL;
-
-    cJSON_ArrayForEach(current_element, cJSON_GetObjectItem(tags_json, tag))
+    for (int i=0; i<numberOfTags; i++)
     {
-        if (cJSON_GetObjectItem(cJSON_GetObjectItem(tags_json, tag), current_element->string)->valueint)
-        {
-            strcat(tags, "_");
-            strcat(tags, current_element->string);
-        }
+        strcat(tags, "_");
+        strcat(tags, cJSON_GetArrayItem(tag_list, i)->valuestring);
     }
 
     cJSON_Delete(tags_json);
@@ -80,7 +76,8 @@ Entity* CreateEntity(Vector2 position, char* tag, bool isAffectedByGravity, floa
         },
 
         .uuid = uuid,
-        .tags = tags
+        .tags = tags,
+        .state = idle
     };
     
     return entity;
@@ -114,17 +111,22 @@ void DrawEntity(Entity entity)
 
 bool EntityHasTag(Entity* entity, char* tag)
 {
+    char* entityTags = malloc(sizeof(entity->tags));
+    strcpy(entityTags, entity->tags);
+
     char* token = strtok(entity->tags, "_");
 
     while (token != NULL)
     {
         if (!strcmp(token, tag))
         {
+            strcpy(entity->tags, entityTags);
             return true;
         }
         token = strtok(NULL, "_");
     }
 
+    strcpy(entity->tags, entityTags);
     return false;
 }
 

@@ -7,8 +7,8 @@
 
 void _CollisionPreventionEntityLevelHitbox (Chunk chunk);
 void _CollisionPreventionEntityEntity (Chunk chunk);
+void _CheckForOnGround(Chunk chunk);
 void _UpdateEntityChunks (EntityManager entityManager);
-bool _IsEntityStandable (Entity* entity);
 
 EntityManager CreateEntityManager(Level level)
 {
@@ -60,14 +60,16 @@ void UpdateEntities(EntityManager entityManager, float gravity, float deltaTime)
     {
         UpdateEntity(entityManager.entities[i], gravity, deltaTime);
         entityManager.entities[i]->onGround = false;
+        entityManager.entities[i]->state = idle;
     }
 
     _UpdateEntityChunks(entityManager);
     
     for (int i=0; i<entityManager.level.numberOfChunks; i++)
     {
-        _CollisionPreventionEntityLevelHitbox(entityManager.level.chunks[i]);
         _CollisionPreventionEntityEntity(entityManager.level.chunks[i]);
+        _CollisionPreventionEntityLevelHitbox(entityManager.level.chunks[i]);
+        _CheckForOnGround(entityManager.level.chunks[i]);
     }
 }
 
@@ -79,10 +81,6 @@ void _CollisionPreventionEntityLevelHitbox (Chunk chunk)
         for (int j=0; j<chunk.numberOfLevelHitboxes; j++)
         {
             CollisionPreventionEntityHitbox(chunk.entitiesInChunk[i], chunk.levelHitboxesInChunk[j]);
-            if (CheckForOnGround(*chunk.entitiesInChunk[i], chunk.levelHitboxesInChunk[j])) 
-            {
-                chunk.entitiesInChunk[i]->onGround = true;
-            }
         }
     }
 }
@@ -96,21 +94,32 @@ void _CollisionPreventionEntityEntity (Chunk chunk)
             if (i == j) {continue;}
             
             CollisionPreventionEntityEntity(chunk.entitiesInChunk[i], chunk.entitiesInChunk[j]);
-            if (CheckForOnGround(*chunk.entitiesInChunk[i], chunk.entitiesInChunk[j]->hitbox) && _IsEntityStandable(chunk.entitiesInChunk[j])) {
-                chunk.entitiesInChunk[i]->onGround = true;
-            }      
         }
     }
 }
 
-bool _IsEntityStandable (Entity* entity)
+void _CheckForOnGround(Chunk chunk)
 {
-    if (entity->onGround && EntityHasTag(entity, "standable"))
+    for (int i=0; i<chunk.numberOfEntities; i++)
     {
-        return true;
+        for (int j=0; j<chunk.numberOfLevelHitboxes; j++)
+        {
+            if (CheckForOnGround(*chunk.entitiesInChunk[i], chunk.levelHitboxesInChunk[j])) 
+            {
+                chunk.entitiesInChunk[i]->onGround = true;
+                break;
+            }
+        }
+
+        for (int j=0; j<chunk.numberOfEntities; j++)
+        {
+            if (i==j) {continue;}
+            if (CheckForOnGround(*chunk.entitiesInChunk[i], chunk.entitiesInChunk[j]->hitbox) && EntityHasTag(chunk.entitiesInChunk[j], "standable")) {
+                chunk.entitiesInChunk[i]->onGround = true;
+                break;
+            }      
+        }
     }
-    
-    return false;
 }
 
 void _UpdateEntityChunks (EntityManager entityManager)

@@ -4,6 +4,12 @@
 #include "raylib.h"
 #include "hitbox.h"
 
+typedef enum STATE
+{
+    idle,
+    pushing
+} STATE;
+
 typedef struct Entity
 {
     float mass;
@@ -21,6 +27,7 @@ typedef struct Entity
 
     int uuid;
     char* tags;
+    STATE state;
 } Entity;
 
 Entity* CreateEntity(Vector2 position, char* tag, bool isAffectedByGravity, float mass, Vector2 size, float drag, int uuid);

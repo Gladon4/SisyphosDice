@@ -1,14 +1,13 @@
 {
-    "player": {
-        "standable": 0,
-        "pushable": 0
-    },
-    "dice": {
-        "standable": 1,
-        "pushable": 1
-    },
-    "enemy": {
-        "standable": 0,
-        "pushable": 0
-    }
+    "player": [
+        "player",
+        "standable"
+    ],
+    "dice": [
+        "standable",
+        "pushable"
+    ],
+    "enemy": [
+        "enemy"
+    ]
 }
