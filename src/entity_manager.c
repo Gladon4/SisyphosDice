@@ -114,7 +114,8 @@ void _CheckForOnGround(Chunk chunk)
         for (int j=0; j<chunk.numberOfEntities; j++)
         {
             if (i==j) {continue;}
-            if (CheckForOnGround(*chunk.entitiesInChunk[i], chunk.entitiesInChunk[j]->hitbox) && EntityHasTag(chunk.entitiesInChunk[j], "standable")) {
+            if (CheckForOnGround(*chunk.entitiesInChunk[i], chunk.entitiesInChunk[j]->hitbox) && EntityHasTag(chunk.entitiesInChunk[j], "standable") && chunk.entitiesInChunk[i]->state != pushing) 
+            {
                 chunk.entitiesInChunk[i]->onGround = true;
                 break;
             }      
