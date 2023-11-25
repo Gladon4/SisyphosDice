@@ -65,11 +65,14 @@ void UpdateEntities(EntityManager entityManager, float gravity, float deltaTime)
 
     _UpdateEntityChunks(entityManager);
     
-    for (int i=0; i<entityManager.level.numberOfChunks; i++)
+    for (int j=0; j<5; j++)
     {
-        _CollisionPreventionEntityEntity(entityManager.level.chunks[i]);
-        _CollisionPreventionEntityLevelHitbox(entityManager.level.chunks[i]);
-        _CheckForOnGround(entityManager.level.chunks[i]);
+        for (int i=0; i<entityManager.level.numberOfChunks; i++)
+        {
+            _CollisionPreventionEntityEntity(entityManager.level.chunks[i]);
+            _CollisionPreventionEntityLevelHitbox(entityManager.level.chunks[i]);
+            _CheckForOnGround(entityManager.level.chunks[i]);
+        }    
     }
 }
 
@@ -81,6 +84,7 @@ void _CollisionPreventionEntityLevelHitbox (Chunk chunk)
         for (int j=0; j<chunk.numberOfLevelHitboxes; j++)
         {
             CollisionPreventionEntityHitbox(chunk.entitiesInChunk[i], chunk.levelHitboxesInChunk[j]);
+            UpdateEntityHitBox(chunk.entitiesInChunk[i]);
         }
     }
 }
@@ -94,6 +98,8 @@ void _CollisionPreventionEntityEntity (Chunk chunk)
             if (i == j) {continue;}
             
             CollisionPreventionEntityEntity(chunk.entitiesInChunk[i], chunk.entitiesInChunk[j]);
+            UpdateEntityHitBox(chunk.entitiesInChunk[i]);
+            UpdateEntityHitBox(chunk.entitiesInChunk[j]);
         }
     }
 }

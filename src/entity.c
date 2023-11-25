@@ -96,6 +96,11 @@ void UpdateEntity(Entity* entity, float gravity, float deltaTime)
 
     entity->position = Vector2Add(entity->position, Vector2Scale(entity->velocity, deltaTime * 60));
 
+    UpdateEntityHitBox(entity);
+}
+
+void UpdateEntityHitBox(Entity* entity)
+{
     entity->hitbox.rect = (Rectangle) {
         .x = entity->position.x - entity->size.x/2,
         .y = entity->position.y - entity->size.y/2,
