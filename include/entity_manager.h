@@ -14,7 +14,7 @@ typedef struct EntityManager
     Level level;
 } EntityManager;
 
-EntityManager CreateEntityManager(Level level);
+EntityManager CreateEntityManager(Level level, const int maxNumberOfEntities);
 
 Entity* EntityManagerCreateEntity(EntityManager* entityManager, Vector2 position, char* tag, bool isAffectedByGravity, float mass, Vector2 size, float drag);
 

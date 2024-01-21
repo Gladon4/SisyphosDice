@@ -15,6 +15,12 @@
 		"hitbox.h": "c",
 		"collision_system.h": "c",
 		"functional": "c",
-		"camera.h": "c"
+		"camera.h": "c",
+		"system_error": "c",
+		"array": "c",
+		"tuple": "c",
+		"type_traits": "c",
+		"utility": "c",
+		"stdio.h": "c"
 	}
 }

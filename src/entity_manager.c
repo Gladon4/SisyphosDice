@@ -10,10 +10,10 @@ void _CollisionPreventionEntityEntity (Chunk chunk);
 void _CheckForOnGround(Chunk chunk);
 void _UpdateEntityChunks (EntityManager entityManager);
 
-EntityManager CreateEntityManager(Level level)
+EntityManager CreateEntityManager(Level level, const int maxNumberOfEntities)
 {
     return (EntityManager) {
-        .entities = calloc(1000, sizeof(Entity*)),
+        .entities = calloc(maxNumberOfEntities, sizeof(Entity*)),
         .numberOfEntities = 0,
         .currentUUID = 0,
         .level = level
@@ -134,7 +134,7 @@ void _UpdateEntityChunks (EntityManager entityManager)
     for (int i=0; i<entityManager.level.numberOfChunks; i++)
     {
         free(entityManager.level.chunks[i].entitiesInChunk); 
-        entityManager.level.chunks[i].entitiesInChunk = calloc(1000, sizeof(Entity*));
+        entityManager.level.chunks[i].entitiesInChunk = calloc(100, sizeof(Entity*));
 
         entityManager.level.chunks[i].numberOfEntities = 0;
     }

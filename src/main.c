@@ -10,10 +10,10 @@
 #include "main_camera.h"
 
 
-void KeyBoardInput(Entity* player)
+void KeyBoardInput(Entity* player, float deltaTime)
 {
-    if (IsKeyDown(KEY_A)) {player->velocity.x -= 1.2;}
-    if (IsKeyDown(KEY_D)) {player->velocity.x += 1.2;}
+    if (IsKeyDown(KEY_A)) {player->velocity.x -= 1.2 * deltaTime * 60;}
+    if (IsKeyDown(KEY_D)) {player->velocity.x += 1.2 * deltaTime * 60;}
 
     if (IsKeyDown(KEY_SPACE) && player->onGround) 
     {
@@ -30,7 +30,7 @@ int main()
 
 
     Level testLevel = CreateLevel("resources/levels/testStage.json", "Test Stage", 500);
-    EntityManager entityManager = CreateEntityManager(testLevel);
+    EntityManager entityManager = CreateEntityManager(testLevel, 1000);
     
     Entity* player = EntityManagerCreateEntity(&entityManager, (Vector2){400, 50}, "player", true, 1, (Vector2){50, 50}, 0.1);
     EntityManagerCreateEntity(&entityManager, (Vector2){200, 50}, "dice", true, 1.2, (Vector2){150, 150}, 0.1);
@@ -51,12 +51,12 @@ int main()
         if (IsKeyPressed(KEY_F10)) {SetTargetFPS(240);}
         if (IsKeyPressed(KEY_F11)) {SetTargetFPS(0);}        
 
-        KeyBoardInput(player); 
 
         float deltaTime = GetFrameTime();
 
         UpdateEntities(entityManager, testLevel.gravity, deltaTime);
         UpdateCameraPosition(&mainCamera, testLevel, deltaTime);
+        KeyBoardInput(player, deltaTime); 
 
         BeginDrawing();
         BeginMode2D(mainCamera.camera);
