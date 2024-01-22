@@ -26,22 +26,4 @@ void removeLinkedList(Vector2LinkedList* linkedList, int index);
 void printLinkedList(Vector2LinkedList* linkedList);
 
 
-
-typedef struct IntArrayList
-{
-    int* array;
-    int length;
-    int highestUsedIndex;
-}IntArrayList;
-
-
-IntArrayList createArrayList();
-int getIntArrayListItem(IntArrayList* list, int index);
-void setIntArrayListItem(IntArrayList* list, int index, int value);
-void resizeIntArrayList(IntArrayList* list, int newSize);
-void appendIntArrayList(IntArrayList* list, int value);
-
-
-
-
 #endif

@@ -1,2 +1,6 @@
-main
+SisiphusDice
 *.o
+CMakeCache.txt
+*.cmake
+CMakeFiles
+Makefile
