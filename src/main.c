@@ -34,6 +34,7 @@ int main()
     
     Entity* player = EntityManagerCreateEntity(&entityManager, (Vector2){400, 50}, "player", true, 1, (Vector2){50, 50}, 0.1);
     EntityManagerCreateEntity(&entityManager, (Vector2){200, 50}, "dice", true, 1.2, (Vector2){150, 150}, 0.1);
+    EntityManagerCreateEntity(&entityManager, (Vector2){500, 50}, "test", true, 1.2, (Vector2){150, 150}, 0.1);
 
     MainCamera mainCamera = CreateMainCamera(Vector2Zero(), screeSize, player, 5);
 

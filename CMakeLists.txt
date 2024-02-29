@@ -8,8 +8,7 @@ set (source_dir "${PROJECT_SOURCE_DIR}/src/")
 file (GLOB_RECURSE source_files "${source_dir}/*.c")
 
 add_library(raylib STATIC IMPORTED)
-set_target_properties(raylib PROPERTIES
-  IMPORTED_LOCATION "/home/alex/raylib/src/libraylib.so")
+set_target_properties(raylib PROPERTIES IMPORTED_LOCATION "/home/alex/raylib/src/libraylib.so")
 
 add_executable(SisiphusDice ${source_files})
 
